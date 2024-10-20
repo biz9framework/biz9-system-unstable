@@ -72,13 +72,9 @@ module.exports.framework_git_commit = function () {
                     console.log(error);
                     return;
                 }
-                console.log(stdout);
+                new_version=String(stdout).trim();
                 call();
             });
-        },
-        function(call){
-            new_version=package.version;
-            call();
         },
         function(call){
             var fs = require('fs')
@@ -87,6 +83,12 @@ module.exports.framework_git_commit = function () {
                     return console.log(err);
                 }
                 var result = data.replace(current_version, new_version);
+                console.log('aaaaa');
+                console.log(current_version);
+                console.log(new_version);
+                console.log('cool');
+                console.log(result);
+                console.log('bbbbb');
                 fs.writeFile("biz9_config.js", result, 'utf8', function (err) {
                     if (err) return console.log(err);
                 });
