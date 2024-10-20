@@ -1,4 +1,5 @@
 const biz9_config = require("./biz9_config");
+const package_json = require('./package.json');
 const async=require("async");
 const prompt=require('prompt-sync')();
 const { exec } = require('child_process');
@@ -54,6 +55,7 @@ module.exports.framework_git_init = function () {
 };
 module.exports.framework_git_commit = function () {
     let commit_note='';
+    let version='';
     async.series([
         function(call){
             Print.show_header('BiZ9 Framework Git Commit');
@@ -95,13 +97,20 @@ module.exports.framework_git_commit = function () {
             });
         },
        function(call){
-            var pjson = require('./package.json');
-           console.log('new version');
-            console.log(pjson.version);
+           version=package_json.version;
         },
         function(call){
+            //sed -i "s/APP_VERSION=.*/APP_VERSION='${APP_VERSION_NEW}'/" .biz9_config.sh
+            exec("s/VERSION=.*/VERSION='"+version+"'/"+biz9_config.js, (error, stdout, stderr) => {
+                if (error) {
+                    console.log(error);
+                    return;
+                }
+                console.log(stdout);
+                call();
+            });
         },
-        function(call){
+       function(call){
         },
         function(call){
             Print.show_footer();
