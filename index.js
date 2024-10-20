@@ -1,5 +1,5 @@
 const biz9_config = require("./biz9_config");
-const package_json = require('./package.json');
+const package = require('./package.json');
 const async=require("async");
 const prompt=require('prompt-sync')();
 const { exec } = require('child_process');
@@ -9,10 +9,10 @@ class Print {
         console.log(title);
         console.log('############');
     }
-  static show_footer(title) {
-      if(!title){
-          title='';
-      }
+    static show_footer(title) {
+        if(!title){
+            title='';
+        }
         console.log('############');
         console.log('END');
         console.log(new Date().toLocaleString());
@@ -55,11 +55,43 @@ module.exports.framework_git_init = function () {
 };
 module.exports.framework_git_commit = function () {
     let commit_note='';
-    let version='';
+    let current_version='';
+    let new_version='';
     async.series([
         function(call){
             Print.show_header('BiZ9 Framework Git Commit');
             call();
+        },
+        function(call){
+            current_version=biz9_config.VERSION;
+            call();
+        },
+        function(call){
+            exec('npm version patch --no-git-tag-version', (error, stdout, stderr) => {
+                if (error) {
+                    console.log(error);
+                    return;
+                }
+                console.log(stdout);
+                call();
+            });
+        },
+        function(call){
+            new_version=package.version;
+            call();
+        },
+        function(call){
+            var fs = require('fs')
+            fs.readFile("biz9_config.js", 'utf8', function (err,data) {
+                if (err) {
+                    return console.log(err);
+                }
+                var result = data.replace(current_version, new_version);
+                fs.writeFile("biz9_config.js", result, 'utf8', function (err) {
+                    if (err) return console.log(err);
+                });
+                call();
+            });
         },
         function(call){
             commit_note = prompt('Enter Commit notes: ');
@@ -85,43 +117,14 @@ module.exports.framework_git_commit = function () {
                 call();
             });
         },
-
-        function(call){
-            exec('npm version patch', (error, stdout, stderr) => {
-                if (error) {
-                    console.log(error);
-                    return;
-                }
-                console.log(stdout);
-                call();
-            });
-        },
-       function(call){
-           version=package_json.version;
-        },
-        function(call){
-            //sed -i "s/APP_VERSION=.*/APP_VERSION='${APP_VERSION_NEW}'/" .biz9_config.sh
-            exec("s/VERSION=.*/VERSION='"+version+"'/"+biz9_config.js, (error, stdout, stderr) => {
-                if (error) {
-                    console.log(error);
-                    return;
-                }
-                console.log(stdout);
-                call();
-            });
-        },
-       function(call){
-        },
         function(call){
             Print.show_footer();
             call();
         },
     ],
         function(err, result){
+            console.log('Done');
         });
-    //git add -A .
-    //git commit -m  "${commit_notes}"
-
 };
 
 
@@ -133,7 +136,7 @@ module.exports.framework_info = function () {
     console.log("Branch: "+biz9_config.BRANCH);
     Print.show_footer();
 };
-module.exports.framework_git_commit_cool = function () {
+module.exports.framework_apple = function () {
     console.log('framework_git_commit');
     /*
 source ./.biz9_config.sh
