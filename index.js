@@ -53,6 +53,94 @@ module.exports.framework_git_init = function () {
         function(err, result){
         });
 };
+module.exports.framework_git_push = function () {
+    let confirm=false;
+    async.series([
+        function(call){
+            Print.show_header('BiZ9 Framework Git Push');
+            call();
+        },
+        function(call){
+            confirm = prompt('Are you sure?:');
+            call();
+        },
+        function(call){
+            console.log('aaaaaa');
+            console.log("git push -f "+biz9_config.REPO+" "+biz9_config.BRANCH);
+            exec("git push -f "+biz9_config.REPO+" "+biz9_config.BRANCH, (error, stdout, stderr) => {
+                if (error) {
+                    console.log(error);
+                    return;
+                }
+                call();
+            });
+        },
+        function(call){
+            if(confirm){
+            }
+            call();
+        },
+
+
+        /*
+        function(call){
+            current_version=biz9_config.VERSION;
+            call();
+        },
+        function(call){
+            exec('npm version patch --no-git-tag-version', (error, stdout, stderr) => {
+                if (error) {
+                    console.log(error);
+                    return;
+                }
+                new_version=String(stdout).trim();
+                call();
+            });
+        },
+        function(call){
+            var fs = require('fs')
+            fs.readFile("biz9_config.js", 'utf8', function (err,data) {
+                if (err) {
+                    return console.log(err);
+                }
+                var result = data.replace(current_version, new_version);
+                fs.writeFile("biz9_config.js", result, 'utf8', function (err) {
+                    if (err) return console.log(err);
+                });
+                call();
+            });
+        },
+       function(call){
+            exec('git add -A .', (error, stdout, stderr) => {
+                if (error) {
+                    console.log(error);
+                    return;
+                }
+                console.log(stdout);
+                call();
+            });
+        },
+        function(call){
+            exec("git commit -m "+commit_note, (error, stdout, stderr) => {
+                if (error) {
+                    console.log(error);
+                    return;
+                }
+                console.log(stdout);
+                call();
+            });
+        },
+        */
+        function(call){
+            Print.show_footer();
+            call();
+        },
+    ],
+        function(err, result){
+            console.log('Done');
+        });
+};
+
 module.exports.framework_git_commit = function () {
     let commit_note='';
     let current_version='';
@@ -83,12 +171,6 @@ module.exports.framework_git_commit = function () {
                     return console.log(err);
                 }
                 var result = data.replace(current_version, new_version);
-                console.log('aaaaa');
-                console.log(current_version);
-                console.log(new_version);
-                console.log('cool');
-                console.log(result);
-                console.log('bbbbb');
                 fs.writeFile("biz9_config.js", result, 'utf8', function (err) {
                     if (err) return console.log(err);
                 });
@@ -99,7 +181,7 @@ module.exports.framework_git_commit = function () {
             commit_note = prompt('Enter Commit notes: ');
             call();
         },
-      function(call){
+        function(call){
             exec('git add -A .', (error, stdout, stderr) => {
                 if (error) {
                     console.log(error);
@@ -128,8 +210,6 @@ module.exports.framework_git_commit = function () {
             console.log('Done');
         });
 };
-
-
 module.exports.framework_info = function () {
     Print.show_header('BiZ9 Framework Info');
     console.log("Title: "+biz9_config.TITLE);
@@ -166,7 +246,7 @@ echo "Done!"
 exit
 */
 };
-module.exports.framework_git_push = function () {
+module.exports.framework_apple = function () {
     console.log('framework_git_push');
     /*
 echo "#################"
