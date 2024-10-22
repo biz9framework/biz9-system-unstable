@@ -53,6 +53,41 @@ module.exports.framework_git_init = function () {
         function(err, result){
         });
 };
+
+module.exports.framework_git_init = function () {
+    async.series([
+        function(call){
+            Print.show_header('BiZ9 Framework Git Init');
+            call();
+        },
+        function(call){
+            exec('git init', (error, stdout, stderr) => {
+                if (error) {
+                    console.log(error);
+                    return;
+                }
+                console.log(stdout);
+                call();
+            });
+        },
+        function(call){
+            exec('git checkout -b ' + biz9_config.BRANCH,(error, stdout, stderr) => {
+                if (error) {
+                    console.log(error);
+                    return;
+                }
+                console.log(stdout);
+                call();
+            });
+        },
+        function(call){
+            Print.show_footer();
+            call();
+        },
+    ],
+        function(err, result){
+        });
+};
 module.exports.framework_git_push = function () {
     let confirm=false;
     async.series([
@@ -103,7 +138,7 @@ module.exports.framework_git_commit = function () {
             call();
         },
         function(call){
-            exec('npm version patch --no-git-tag-version', (error, stdout, stderr) => {
+            exec("npm version patch --no-git-tag-version --tag-version-prefix=''", (error, stdout, stderr) => {
                 if (error) {
                     console.log(error);
                     return;
