@@ -19,14 +19,41 @@ class Print {
         console.log('############');
     }
 }
-module.exports.framework_git_init = function () {
+module.exports.branch_update = function () {
+    let source_branch='';
+    let destionation_branch='';
+    const package = require('./package.json');
+    function get_branch(branch){
+        switch(branch)
+        {
+            case '1':
+                return 'unstable';
+                break;
+            case '2':
+                return 'testing';
+                break;
+            case '3':
+                return 'stable';
+                break;
+        }
+    }
     async.series([
         function(call){
-            Print.show_header('BiZ9 Framework Git Init');
+            Print.show_header('BiZ9 Framework Branch Update');
             call();
         },
         function(call){
-            exec('git init', (error, stdout, stderr) => {
+            _source_branch=prompt('Enter Source Branch (1=unstable 2=testing 3=stable):');
+            source_branch=get_branch(_source_branch);
+            call();
+        },
+        function(call){
+            _destination_branch=prompt('Enter Destination Branch (1=unstable 2=testing 3=stable):');
+            destination_branch=get_branch(_destination_branch);
+            call();
+        },
+        function(call){
+            exec("find ../"+destination_branch+"/* \! -name 'biz9_config.js' -delete", (error, stdout, stderr) => {
                 if (error) {
                     console.log(error);
                     return;
@@ -36,42 +63,7 @@ module.exports.framework_git_init = function () {
             });
         },
         function(call){
-            exec('git checkout -b ' + biz9_config.BRANCH,(error, stdout, stderr) => {
-                if (error) {
-                    console.log(error);
-                    return;
-                }
-                console.log(stdout);
-                call();
-            });
-        },
-        function(call){
-            Print.show_footer();
-            call();
-        },
-    ],
-        function(err, result){
-        });
-};
-
-module.exports.framework_git_init = function () {
-    async.series([
-        function(call){
-            Print.show_header('BiZ9 Framework Git Init');
-            call();
-        },
-        function(call){
-            exec('git init', (error, stdout, stderr) => {
-                if (error) {
-                    console.log(error);
-                    return;
-                }
-                console.log(stdout);
-                call();
-            });
-        },
-        function(call){
-            exec('git checkout -b ' + biz9_config.BRANCH,(error, stdout, stderr) => {
+            exec("rsync -av --exclude" +" ../"+destination_branch+"/biz9_config.js" +" ../"+source_branch+"/*" +" ../"+destination_branch+"/", (error, stdout, stderr) => {
                 if (error) {
                     console.log(error);
                     return;
@@ -237,69 +229,64 @@ module.exports.search = function () {
             Print.show_footer();
         });
 };
-
-module.exports.framework_apple = function () {
-    console.log('framework_git_commit');
-    /*
-source ./.biz9_config.sh
-echo "#################"
-echo "BiZ9 App Git Commit"
-echo "#################"
-INCREMENT_VERSION ()
-{
-}
-echo 'Enter notes:'
-read commit_notes
-APP_VERSION_NEW=$(INCREMENT_VERSION ${APP_VERSION});
-#cms
-echo "----------------------------------"
-echo "Framework Product: ${FRAMEWORK_TITLE}"
-echo "Framework Version: ${FRAMEWORK_VERSION}"
-echo "GIT Branch: ${BIZ9_GIT_BRANCH}"
-echo "GIT Repo: ${GIT_REPO}"
-echo "Project-ID: ${PROJECT_ID}"
-echo "App Title: ${APP_TITLE}"
-echo "App-Title-ID: ${APP_TITLE_ID}"
-echo "App Version: ${APP_VERSION_NEW}"
-echo "Commit Notes: ${commit_notes}"
-echo "Done!"
-exit
-*/
+module.exports.framework_git_init = function () {
+    async.series([
+        function(call){
+            Print.show_header('BiZ9 Framework Git Init');
+            call();
+        },
+        function(call){
+            exec('git init', (error, stdout, stderr) => {
+                if (error) {
+                    console.log(error);
+                    return;
+                }
+                console.log(stdout);
+                call();
+            });
+        },
+        function(call){
+            exec('git checkout -b ' + biz9_config.BRANCH,(error, stdout, stderr) => {
+                if (error) {
+                    console.log(error);
+                    return;
+                }
+                console.log(stdout);
+                call();
+            });
+        },
+        function(call){
+            Print.show_footer();
+            call();
+        },
+    ],
+        function(err, result){
+        });
 };
-module.exports.framework_apple = function () {
-    console.log('framework_git_push');
-    /*
-echo "#################"
-echo "BiZ9 App Git Push"
-echo "#################"
-echo "Are you sure you want to push?"
-read n
-read n
-yes=$(echo $n | tr -s '[:upper:]' '[:lower:]')
-if [ ! ${GIT_BRANCH} ]; then
-   GIT_BRANCH=${BIZ9_GIT_BRANCH}
-fi
-if [[  "$n" = "yes"  ]] ; then
-    ##
-    git push -f ${GIT_REPO} ${GIT_BRANCH}
-    else
-    echo "exit"
-fi
-fi
-echo "----------------------------------"
-echo "Framework Product: ${FRAMEWORK_TITLE}"
-echo "Framework Version: ${FRAMEWORK_VERSION}"
-echo "GIT Branch: ${BIZ9_GIT_BRANCH}"
-echo "GIT Repo: ${GIT_REPO}"
-echo "Project-ID: ${PROJECT_ID}"
-echo "App Title: ${APP_TITLE}"
-echo "App-Title-ID: ${APP_TITLE_ID}"
-echo "App Version: ${APP_VERSION}"
-echo "Done!"
-echo "----------------------------------"
-exit
-cool_bean
-*/
-
+module.exports.framework_npm_publish = function () {
+    async.series([
+        function(call){
+            Print.show_header('BiZ9 Framework NPM Publish');
+            call();
+        },
+        function(call){
+            exec('sudo npm publish --access public', (error, stdout, stderr) => {
+                if (error) {
+                    console.log(error);
+                    return;
+                }
+                console.log(stdout);
+                call();
+            });
+        },
+        function(call){
+            Print.show_footer();
+            call();
+        },
+    ],
+        function(err, result){
+        });
 };
+
+
 
