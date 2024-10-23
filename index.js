@@ -19,7 +19,7 @@ class Print {
         console.log('############');
     }
 }
-module.exports.branch_update = function () {
+module.exports.framework_branch_update = function () {
     let source_branch='';
     let destionation_branch='';
     const package = require('./package.json');
