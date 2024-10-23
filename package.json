@@ -1,11 +1,19 @@
 {
   "name": "biz9-system",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Certified CoderZ",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/biz9framework/biz9-system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/biz9framework/biz9-system/issues"
+  },
+  "homepage": "https://github.com/biz9framework/biz9-system#readme"
 }
