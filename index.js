@@ -1,7 +1,9 @@
 const biz9_config = require("./biz9_config");
-const package = require('./package.json');
+const package = require("./package.json");
 const async=require("async");
-const prompt=require('prompt-sync')();
+//const prompt=require("prompt-sync");
+const prompt = require('prompt-sync')();
+const fs = require("fs");
 const { exec } = require('child_process');
 class Print {
     static show_header(title) {
@@ -20,8 +22,11 @@ class Print {
     }
 }
 module.exports.framework_branch_update = function () {
+    console.log('afsdfa');
     let source_branch='';
-    let destionation_branch='';
+    let destination_branch='';
+    let create_cache_dir=false;
+    let create_biz9_dir=false;
     const package = require('./package.json');
     function get_branch(branch){
         switch(branch)
@@ -39,9 +44,13 @@ module.exports.framework_branch_update = function () {
     }
     async.series([
         function(call){
+            console.log('111111111');
+            source_branch='unstable';
+            destination_branch='stable';
             Print.show_header('BiZ9 Framework Branch Update');
             call();
         },
+        /*
         function(call){
             _source_branch=prompt('Enter Source Branch (1=unstable 2=testing 3=stable):');
             source_branch=get_branch(_source_branch);
@@ -52,8 +61,49 @@ module.exports.framework_branch_update = function () {
             destination_branch=get_branch(_destination_branch);
             call();
         },
+        */
         function(call){
-            exec("find ../"+destination_branch+"/* \! -name 'biz9_config.js' -delete", (error, stdout, stderr) => {
+            let path='~/.cache';
+            let path_mk='mkdir ~/.cache';
+            if (fs.existsSync(path)) {
+                exec(path_mk, (error, stdout, stderr) => {
+                    if (error) {
+                        console.log(error);
+                        call();
+                    }
+                    console.log(stdout);
+                    call();
+                });
+            }else{
+                call();
+            }
+        },
+        function(call){
+            let path='~/.cache/biz9-system';
+            let path_mk='mkdir ~/.cache/biz9-system';
+            if (fs.existsSync(path)) {
+                exec(path_mk, (error, stdout, stderr) => {
+                    console.log('bbbbbbbbb');
+                    if (error) {
+                        console.log(error);
+                        call();
+                    }
+                    console.log('ccccccc');
+                    console.log(stdout);
+                    call();
+                });
+            }else{
+
+                //call();
+            }
+        },
+        function(call){
+            str = "cp -rf destination_branch + '/biz9_config.js ~/.cache/biz9-system/'";
+            console.log('copy me');
+            console.log(str);
+    //exec("find ../"+destination_branch+"/* \! -name --force'biz9_config.js' -delete", (error, stdout, stderr) => {
+            /*
+            exec(str, (error, stdout, stderr) => {
                 if (error) {
                     console.log(error);
                     return;
@@ -61,10 +111,16 @@ module.exports.framework_branch_update = function () {
                 console.log(stdout);
                 call();
             });
+            */
         },
-        function(call){
-            let command_str = "rsync -av --exclude '" +"biz9_config.js'" +" ../"+source_branch+"/" +" ../"+destination_branch+"/";
-            exec(command_str, (error, stdout, stderr) => {
+
+
+            /*
+            str = "find ../"+destination_branch+"/* \! -name --force'biz9_config.js' -delete";
+            console.log('apple butter');
+            console.log(str);
+    //exec("find ../"+destination_branch+"/* \! -name --force'biz9_config.js' -delete", (error, stdout, stderr) => {
+            exec(str, (error, stdout, stderr) => {
                 if (error) {
                     console.log(error);
                     return;
@@ -72,11 +128,36 @@ module.exports.framework_branch_update = function () {
                 console.log(stdout);
                 call();
             });
-        },
-        function(call){
-            Print.show_footer();
+            */
+    function(call){
+        str = "find ../"+destination_branch+"/* \! -name --force'biz9_config.js' -delete";
+        console.log('apple butter');
+        console.log(str);
+        //exec("find ../"+destination_branch+"/* \! -name --force'biz9_config.js' -delete", (error, stdout, stderr) => {
+        exec(str, (error, stdout, stderr) => {
+            if (error) {
+                console.log(error);
+                return;
+            }
+            console.log(stdout);
             call();
-        },
+        });
+    },
+    function(call){
+        let command_str = "rsync -av --exclude '" +"biz9_config.js'" +" ../"+source_branch+"/" +" ../"+destination_branch+"/";
+        exec(command_str, (error, stdout, stderr) => {
+            if (error) {
+                console.log(error);
+                return;
+            }
+            console.log(stdout);
+            call();
+        });
+    },
+    function(call){
+        Print.show_footer();
+        call();
+    },
     ],
         function(err, result){
         });
@@ -89,9 +170,9 @@ module.exports.framework_git_push = function () {
             call();
         },
         function(call){
-            confirm = prompt('Are you sure?:');
+            confirm = prompt('Are you sure? (yes default):');
             if(!confirm){
-                confirm=true;
+                confirm='y';
             }
             if(confirm.toLowerCase()=='y' || confirm.toLowerCase()=='yes'){
                 confirm=true;
@@ -325,7 +406,7 @@ module.exports.react_build = function () {
             call();
         },
         function(call){
-            var str="react-native bundle --dev false --platform android --entry-file index.js --bundle-output ./android/app/src/main/assets/index.android.bundle --assets-dest ./android/app/src/main/res";
+            var str="cd android && gradlew assembledebug && cd ../";
             exec(str,(error, stdout, stderr) => {
                 if (error) {
                     console.log(error);
@@ -363,7 +444,7 @@ module.exports.react_device_build_deploy = function () {
             });
         },
         function(call){
-            var str="react-native run-android";
+            var str="react-native start";
             exec(str,(error, stdout, stderr) => {
                 if (error) {
                     console.log(error);
@@ -374,8 +455,6 @@ module.exports.react_device_build_deploy = function () {
                 call();
             });
         },
-
-
         function(call){
             Print.show_footer();
             call();
