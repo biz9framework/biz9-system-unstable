@@ -22,7 +22,6 @@ class Print {
     }
 }
 module.exports.framework_branch_update = function () {
-    console.log('afsdfa');
     let source_branch='';
     let destination_branch='';
     let create_cache_dir=false;
@@ -65,8 +64,25 @@ module.exports.framework_branch_update = function () {
         function(call){
             let path='~/.cache';
             let path_mk='mkdir ~/.cache';
+            console.log('aaaaaaaaaa');
             if (fs.existsSync(path)) {
-                exec(path_mk, (error, stdout, stderr) => {
+                exec(path_mk,(error,stdout,stderr)=>{
+                    if (error) {
+                        console.log(error);
+                        call();
+                        }
+                    console.log(stdout);
+                    call();
+                });
+            }else{
+                call();
+            }
+        },
+        function(call){
+            let path='~/.cache/biz9-system';
+            let path_mk='mkdir ~/.cache/biz9-system';
+            if (fs.existsSync(path)){
+                exec(path_mk,(error,stdout,stderr)=>{
                     if (error) {
                         console.log(error);
                         call();
@@ -79,28 +95,13 @@ module.exports.framework_branch_update = function () {
             }
         },
         function(call){
-            let path='~/.cache/biz9-system';
-            let path_mk='mkdir ~/.cache/biz9-system';
-            if (fs.existsSync(path)) {
-                exec(path_mk, (error, stdout, stderr) => {
-                    console.log('bbbbbbbbb');
-                    if (error) {
-                        console.log(error);
-                        call();
-                    }
-                    console.log('ccccccc');
-                    console.log(stdout);
-                    call();
-                });
-            }else{
-
-                //call();
-            }
-        },
-        function(call){
-            str = "cp -rf destination_branch + '/biz9_config.js ~/.cache/biz9-system/'";
+            str = "cp -rf "+destination_branch+"/biz9_config.js ~/.cache/biz9-system/";
+            str_2 = "rm -rf "+destination_branch + "/*;
+            str_3 = "cp -rf "+source_branch + "/* "+ destination_branch +"/";
             console.log('copy me');
             console.log(str);
+            console.log(str_2);
+            console.log(str_3);
     //exec("find ../"+destination_branch+"/* \! -name --force'biz9_config.js' -delete", (error, stdout, stderr) => {
             /*
             exec(str, (error, stdout, stderr) => {
@@ -113,8 +114,6 @@ module.exports.framework_branch_update = function () {
             });
             */
         },
-
-
             /*
             str = "find ../"+destination_branch+"/* \! -name --force'biz9_config.js' -delete";
             console.log('apple butter');
