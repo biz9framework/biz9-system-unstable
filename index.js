@@ -367,6 +367,10 @@ module.exports.framework_git_commit = function () {
             current_version=biz9_config.VERSION;
             call();
         },
+         function(call){
+            Print.show_git_info();
+            call();
+        },
     ],
         function(err, result){
             Print.show_footer();
