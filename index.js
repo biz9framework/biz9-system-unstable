@@ -37,12 +37,6 @@ class Print {
 }
 module.exports.framework_git_main_push = function () {
     let confirm=false;
-    /*
-    git checkout master
-git pull origin master
-git merge test
-git push origin master
-*/
     async.series([
         function(call){
             Print.show_header('BiZ9 Framework Git Main Push');
