@@ -14,9 +14,10 @@ class Print {
     static show_sub_header(title) {
         console.log('------------');
         console.log(title);
+        console.log('---');
     }
     static show_sub_footer() {
-        console.log('------------');
+        console.log('---');
     }
     static show_footer(title) {
         if(!title){
@@ -175,6 +176,15 @@ module.exports.framework_git_push = function () {
             Print.show_header('BiZ9 Framework Git Push');
             call();
         },
+ function(call){
+            Print.show_sub_header('Git Info');
+             console.log("Version: "+biz9_config.VERSION);
+                console.log("Repo: "+biz9_config.REPO);
+            console.log("Branch: "+biz9_config.BRANCH);
+            Print.show_sub_footer();
+            call();
+        },
+
         function(call){
             confirm = prompt('Are you sure? (yes default):');
             if(!confirm){
@@ -187,7 +197,7 @@ module.exports.framework_git_push = function () {
             }
             call();
         },
-        function(call){
+       function(call){
             if(confirm){
                 exec("git push -f "+biz9_config.REPO+" "+biz9_config.BRANCH, (error, stdout, stderr) => {
                     if (error) {
