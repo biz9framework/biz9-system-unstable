@@ -118,6 +118,7 @@ module.exports.framework_git_main_push = function () {
                 call();
             }
         },
+        /*
         function(call){
             if(confirm){
                 exec("git pull origin main", (error, stdout, stderr) => {
@@ -133,6 +134,7 @@ module.exports.framework_git_main_push = function () {
                 call();
             }
         },
+        */
     ],
         function(err, result){
             Print.show_footer();
