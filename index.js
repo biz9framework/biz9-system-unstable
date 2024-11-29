@@ -1,7 +1,6 @@
 const biz9_config = require("./biz9_config");
 const package = require("./package.json");
 const async=require("async");
-//const prompt=require("prompt-sync");
 const prompt = require('prompt-sync')();
 const fs = require("fs");
 const { exec } = require('child_process');
@@ -36,57 +35,44 @@ class Print {
         Print.show_sub_footer();
     }
 }
-module.exports.framework_branch_update_old = function () {
-    let source_branch='';
-    let destination_branch='';
-    let create_cache_dir=false;
-    let create_biz9_dir=false;
-    const package = require('./package.json');
-    function get_branch(branch){
-        switch(branch)
-        {
-            case '1':
-                return 'unstable';
-                break;
-            case '2':
-                return 'testing';
-                break;
-            case '3':
-                return 'stable';
-                break;
-        }
-    }
+module.exports.framework_git_main_push = function () {
+    let confirm=false;
+    /*
+    git checkout master
+git pull origin master
+git merge test
+git push origin master
+*/
     async.series([
         function(call){
-            console.log('111111111');
-            source_branch='unstable';
-            destination_branch='stable';
-            Print.show_header('BiZ9 Framework Branch Update');
-            call();
-        },
-        /*
-        function(call){
-            _source_branch=prompt('Enter Source Branch (1=unstable 2=testing 3=stable):');
-            source_branch=get_branch(_source_branch);
+            Print.show_header('BiZ9 Framework Git Main Push');
             call();
         },
         function(call){
-            _destination_branch=prompt('Enter Destination Branch (1=unstable 2=testing 3=stable):');
-            destination_branch=get_branch(_destination_branch);
+            Print.show_git_info();
             call();
         },
-        */
         function(call){
-            let path='~/.cache';
-            let path_mk='mkdir ~/.cache';
-            console.log('aaaaaaaaaa');
-            if (fs.existsSync(path)) {
-                exec(path_mk,(error,stdout,stderr)=>{
+            confirm = prompt('Are you sure? (yes default):');
+            if(!confirm){
+                confirm='y';
+            }
+            if(confirm.toLowerCase()=='y' || confirm.toLowerCase()=='yes'){
+                confirm=true;
+            }else{
+                confirm=false;
+            }
+            call();
+        },
+        function(call){
+            if(confirm){
+                exec("git checkout main", (error, stdout, stderr) => {
                     if (error) {
                         console.log(error);
-                        call();
+                        return;
                     }
                     console.log(stdout);
+                    console.log(stderr);
                     call();
                 });
             }else{
@@ -94,15 +80,14 @@ module.exports.framework_branch_update_old = function () {
             }
         },
         function(call){
-            let path='~/.cache/biz9-system';
-            let path_mk='mkdir ~/.cache/biz9-system';
-            if (fs.existsSync(path)){
-                exec(path_mk,(error,stdout,stderr)=>{
+            if(confirm){
+                exec("git pull origin main", (error, stdout, stderr) => {
                     if (error) {
                         console.log(error);
-                        call();
+                        return;
                     }
                     console.log(stdout);
+                    console.log(stderr);
                     call();
                 });
             }else{
@@ -110,73 +95,57 @@ module.exports.framework_branch_update_old = function () {
             }
         },
         function(call){
-            str = "cp -rf "+destination_branch+"/biz9_config.js ~/.cache/biz9-system/";
-            str_2 = "rm -rf "+destination_branch + "/*";
-            str_3 = "cp -rf "+source_branch + "/* "+ destination_branch +"/";
-            console.log('copy me');
-            console.log(str);
-            console.log(str_2);
-            console.log(str_3);
-            //exec("find ../"+destination_branch+"/* \! -name --force'biz9_config.js' -delete", (error, stdout, stderr) => {
-            /*
-            exec(str, (error, stdout, stderr) => {
-                if (error) {
-                    console.log(error);
-                    return;
-                }
-                console.log(stdout);
+            if(confirm){
+                exec("git merge "+biz9_config.BRANCH,(error, stdout, stderr) => {
+                    if (error) {
+                        console.log(error);
+                        return;
+                    }
+                    console.log(stdout);
+                    console.log(stderr);
+                    call();
+                });
+            }else{
                 call();
-            });
-            */
-        },
-        /*
-            str = "find ../"+destination_branch+"/* \! -name --force'biz9_config.js' -delete";
-            console.log('apple butter');
-            console.log(str);
-    //exec("find ../"+destination_branch+"/* \! -name --force'biz9_config.js' -delete", (error, stdout, stderr) => {
-            exec(str, (error, stdout, stderr) => {
-                if (error) {
-                    console.log(error);
-                    return;
-                }
-                console.log(stdout);
-                call();
-            });
-            */
-        function(call){
-            str = "find ../"+destination_branch+"/* \! -name --force'biz9_config.js' -delete";
-            console.log('apple butter');
-            console.log(str);
-            //exec("find ../"+destination_branch+"/* \! -name --force'biz9_config.js' -delete", (error, stdout, stderr) => {
-            exec(str, (error, stdout, stderr) => {
-                if (error) {
-                    console.log(error);
-                    return;
-                }
-                console.log(stdout);
-                call();
-            });
+            }
         },
         function(call){
-            let command_str = "rsync -av --exclude '" +"biz9_config.js'" +" ../"+source_branch+"/" +" ../"+destination_branch+"/";
-            exec(command_str, (error, stdout, stderr) => {
-                if (error) {
-                    console.log(error);
-                    return;
-                }
-                console.log(stdout);
+            if(confirm){
+                exec("git push origin main",(error, stdout, stderr) => {
+                    if (error) {
+                        console.log(error);
+                        return;
+                    }
+                    console.log(stdout);
+                    console.log(stderr);
+                    call();
+                });
+            }else{
                 call();
-            });
+            }
         },
         function(call){
-            Print.show_footer();
-            call();
+            if(confirm){
+                exec("git pull origin main", (error, stdout, stderr) => {
+                    if (error) {
+                        console.log(error);
+                        return;
+                    }
+                    console.log(stdout);
+                    console.log(stderr);
+                    call();
+                });
+            }else{
+                call();
+            }
         },
     ],
         function(err, result){
+            Print.show_footer();
         });
 };
-module.exports.framework_git_push = function () {
+
+module.exports.framework_git_branch_push = function () {
     let confirm=false;
     async.series([
         function(call){
@@ -233,6 +202,10 @@ module.exports.framework_git_branch_update = function () {
             call();
         },
         function(call){
+            Print.show_git_info();
+            call();
+        },
+        function(call){
             Print.show_sub_header('Current Branch');
             exec("git branch --show current", (error, stdout, stderr) => {
                 if (error) {
@@ -240,12 +213,9 @@ module.exports.framework_git_branch_update = function () {
                     return;
                 }
                 console.log(stdout);
+                Print.show_sub_footer();
                 call();
             });
-        },
-        function(call){
-            Print.show_sub_footer();
-            call();
         },
         function(call){
             if(new_branch){
@@ -297,8 +267,32 @@ module.exports.framework_git_branch_update = function () {
             Print.show_footer();
         });
 };
-
-
+module.exports.framework_git_branch_list = function () {
+    async.series([
+        function(call){
+            Print.show_header('BiZ9 Framework Git List');
+            call();
+        },
+        function(call){
+                exec("git branch",(error, stdout, stderr) => {
+                    if (error) {
+                        console.log(error);
+                        return;
+                    }
+                    console.log(stdout);
+                    console.log(stderr);
+                    call();
+                });
+        },
+        function(call){
+            Print.show_git_info();
+            call();
+        },
+    ],
+        function(err, result){
+            Print.show_footer();
+        });
+};
 module.exports.framework_git_commit = function () {
     let commit_note='';
     let current_version='';
