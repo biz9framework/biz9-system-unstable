@@ -1,6 +1,6 @@
 {
-  "name": "biz9-system-unstable",
-  "version": "1.0.38",
+  "name": "biz9-system",
+  "version": "1.0.39",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/biz9framework/biz9-system-unstable.git"
+    "url": "git+https://github.com/biz9framework/biz9-system.git"
   },
   "author": "Certified CoderZ",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/biz9framework/biz9-system-unstable/issues"
+    "url": "https://github.com/biz9framework/biz9-system/issues"
   },
-  "homepage": "https://github.com/biz9framework/biz9-system-unstable#readme",
+  "homepage": "https://github.com/biz9framework/biz9-system#readme",
   "dependencies": {
     "async": "^3.2.6",
     "child_process": "^1.0.2",

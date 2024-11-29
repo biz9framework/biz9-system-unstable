@@ -140,7 +140,6 @@ module.exports.framework_git_main_push = function () {
             Print.show_footer();
         });
 };
-
 module.exports.framework_git_branch_push = function () {
     let confirm=false;
     async.series([
@@ -289,13 +288,13 @@ module.exports.framework_git_branch_list = function () {
             Print.show_footer();
         });
 };
-module.exports.framework_git_commit = function () {
+module.exports.framework_git_branch_commit = function () {
     let commit_note='';
     let current_version='';
     let new_version='';
     async.series([
         function(call){
-            Print.show_header('BiZ9 Framework Git Commit');
+            Print.show_header('BiZ9 Framework Git Branch Commit');
             call();
         },
         function(call){
@@ -623,4 +622,3 @@ module.exports.react_device_port_open = function () {
         function(err, result){
         });
 };
-
