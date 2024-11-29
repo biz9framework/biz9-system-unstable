@@ -363,6 +363,10 @@ module.exports.framework_git_commit = function () {
                 call();
             });
         },
+        function(call){
+            current_version=biz9_config.VERSION;
+            call();
+        },
     ],
         function(err, result){
             Print.show_footer();
