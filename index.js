@@ -11,6 +11,13 @@ class Print {
         console.log(title);
         console.log('############');
     }
+    static show_sub_header(title) {
+        console.log('------------');
+        console.log(title);
+    }
+    static show_sub_footer() {
+        console.log('------------');
+    }
     static show_footer(title) {
         if(!title){
             title='';
@@ -21,7 +28,7 @@ class Print {
         console.log('############');
     }
 }
-module.exports.framework_branch_update = function () {
+module.exports.framework_branch_update_old = function () {
     let source_branch='';
     let destination_branch='';
     let create_cache_dir=false;
@@ -96,7 +103,7 @@ module.exports.framework_branch_update = function () {
         },
         function(call){
             str = "cp -rf "+destination_branch+"/biz9_config.js ~/.cache/biz9-system/";
-            str_2 = "rm -rf "+destination_branch + "/*;
+            str_2 = "rm -rf "+destination_branch + "/*";
             str_3 = "cp -rf "+source_branch + "/* "+ destination_branch +"/";
             console.log('copy me');
             console.log(str);
@@ -200,6 +207,86 @@ module.exports.framework_git_push = function () {
             Print.show_footer();
         });
 };
+module.exports.framework_git_branch_update = function () {
+    let current_branch='';
+    let new_branch='';
+    async.series([
+        function(call){
+            Print.show_header('BiZ9 Framework Git Branch');
+            call();
+        },
+        function(call){
+            current_branch=biz9_config.BRANCH;
+            new_branch=biz9_config.VERSION;
+            call();
+        },
+        function(call){
+            Print.show_sub_header('Current Branch');
+                 exec("git branch --show current", (error, stdout, stderr) => {
+                    if (error) {
+                        console.log(error);
+                        return;
+                    }
+                    console.log(stdout);
+                    call();
+                });
+        },
+        function(call){
+            Print.show_sub_footer();
+            call();
+        },
+        function(call){
+            if(new_branch){
+                exec("git branch "+new_branch, (error, stdout, stderr) => {
+                    if (error) {
+                        console.log(error);
+                        return;
+                    }
+                    console.log(stdout);
+                    console.log(stderr);
+                    call();
+                });
+            }else{
+                call();
+            }
+        },
+        function(call){
+            if(new_branch){
+                exec("git checkout "+new_branch, (error, stdout, stderr) => {
+                    if (error) {
+                        console.log(error);
+                        return;
+                    }
+                    console.log(stdout);
+                    console.log(stderr);
+                    call();
+                });
+            }else{
+                call();
+            }
+        },
+        function(call){
+            fs.readFile("biz9_config.js", 'utf8', function (err,data) {
+                if (err) {
+                    return console.log(err);
+                }
+                var result = data.replace(current_branch, new_branch);
+                fs.writeFile("biz9_config.js", result, 'utf8', function (err) {
+                    if (err) return console.log(err);
+                });
+                call();
+            });
+        },
+        function(call){
+            call();
+        },
+    ],
+        function(err, result){
+            Print.show_footer();
+        });
+};
+
+
 module.exports.framework_git_commit = function () {
     let commit_note='';
     let current_version='';
@@ -224,7 +311,6 @@ module.exports.framework_git_commit = function () {
             });
         },
         function(call){
-            var fs = require('fs')
             fs.readFile("biz9_config.js", 'utf8', function (err,data) {
                 if (err) {
                     return console.log(err);
@@ -488,8 +574,6 @@ module.exports.react_device_log_android = function () {
         function(err, result){
         });
 };
-
-
 module.exports.react_device_port_open = function () {
     let port='';
     async.series([
