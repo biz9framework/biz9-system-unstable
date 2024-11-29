@@ -29,6 +29,7 @@ class Print {
         console.log('############');
     }
     static show_git_info() {
+        const biz9_config = require("./biz9_config");
         Print.show_sub_header('Git Info');
         console.log("Version: "+biz9_config.VERSION);
         console.log("Repo: "+biz9_config.REPO);
