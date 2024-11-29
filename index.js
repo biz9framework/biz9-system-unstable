@@ -36,6 +36,7 @@ class Print {
     }
 }
 module.exports.framework_git_main_push = function () {
+    let current_branch='';
     let confirm=false;
     async.series([
         function(call){
@@ -118,7 +119,6 @@ module.exports.framework_git_main_push = function () {
                 call();
             }
         },
-        /*
         function(call){
             if(confirm){
                 exec("git pull origin main", (error, stdout, stderr) => {
@@ -134,7 +134,26 @@ module.exports.framework_git_main_push = function () {
                 call();
             }
         },
-        */
+        function(call){
+            current_branch=biz9_config.BRANCH;
+            call();
+        },
+        function(call){
+            if(confirm){
+                exec("git checkout "+current_branch, (error, stdout, stderr) => {
+                    if (error) {
+                        console.log(error);
+                        return;
+                    }
+                    console.log(stdout);
+                    console.log(stderr);
+                    call();
+                });
+            }else{
+                call();
+            }
+        },
+
     ],
         function(err, result){
             Print.show_footer();
