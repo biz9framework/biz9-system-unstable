@@ -35,7 +35,7 @@ class Print {
         Print.show_sub_footer();
     }
 }
-module.exports.framework_git_main_branch_merge_checkout = function () {
+module.exports.git_main_branch_merge_checkout = function () {
     let commit_note='';
     let current_branch='';
     let confirm=false;
@@ -145,7 +145,7 @@ module.exports.framework_git_main_branch_merge_checkout = function () {
             Print.show_footer();
         });
 };
-module.exports.framework_git_branch_push = function () {
+module.exports.git_branch_push = function () {
     let confirm=false;
     async.series([
         function(call){
