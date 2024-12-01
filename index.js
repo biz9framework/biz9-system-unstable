@@ -65,11 +65,13 @@ module.exports.git_main_branch_merge_checkout = function () {
                 exec("git checkout -b main", (error, stdout, stderr) => {
                     if (error) {
                         console.log(error);
+                        call();
                         return;
-                    }
+                    }else{
                     console.log(stdout);
                     console.log(stderr);
                     call();
+                    }
                 });
             }else{
                 call();
@@ -440,7 +442,7 @@ module.exports.git_init = function () {
         function(err, result){
         });
 };
-module.exports.framework_npm_publish = function () {
+module.exports.npm_publish = function () {
     async.series([
         function(call){
             Print.show_header('BiZ9 Framework NPM Publish');
